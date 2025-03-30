@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@plugin '@tailwindcss/typography';
+
+@theme {
+    --text-tiny: 0.5rem;
+    --text-tiny--line-height: calc(1 / 0.5);
+}

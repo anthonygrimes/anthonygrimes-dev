@@ -1,0 +1,39 @@
+---
+import {getCollection} from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const posts = (await getCollection('blog')).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<BaseLayout>
+    <div class="flex grow">
+        <div class="w-full mt-4 mb-8 mx-4 sm:mx-auto sm:w-3/4 lg:w-1/2">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold my-4">Posts</h1>
+                <a href="/rss.xml" class="ml-2">
+                    <img class="inline-block h-6 w-6" src="/images/icons/rss.png" alt="RSS Feed Icon">
+                </a>
+            </div>
+            <div class="flex flex-col">
+                {
+                    posts.map((post) => (
+                            <div class="mb-8">
+                                <a href={`/blog/${post.id}/`}>
+                                    <h2 class="text-xl font-bold hover:underline">{post.data.title}</h2>
+                                </a>
+                                <div class="flex flex-col text-sm italic font-light text-neutral-500">
+                                    <p>
+                                        Published on
+                                        <FormattedDate date={post.data.pubDate}/>
+                                    </p>
+                                </div>
+                            </div>
+                    ))
+                }
+            </div>
+        </div>
+    </div>
+</BaseLayout>

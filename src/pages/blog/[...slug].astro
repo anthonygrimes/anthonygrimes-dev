@@ -1,0 +1,59 @@
+---
+import {type CollectionEntry, getCollection} from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+import {render} from 'astro:content';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {getArticleSchema} from '../../structuredData';
+import {blogWebsite} from '../../structuredData';
+
+export async function getStaticPaths() {
+    const posts = await getCollection('blog');
+    return posts.map((post) => ({
+        params: {slug: post.id},
+        props: post,
+    }));
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+
+const articleStructuredData = getArticleSchema(post);
+
+const breadcrumbsStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+        {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Blog',
+            item: `${import.meta.env.SITE}/blog/`,
+        },
+        {
+            '@type': 'ListItem',
+            position: 2,
+            name: post.data.title,
+            item: `${import.meta.env.SITE}/blog/${post.id}/`,
+        },
+    ],
+};
+
+const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [articleStructuredData, breadcrumbsStructuredData, blogWebsite],
+};
+
+const {Content} = await render(post);
+---
+
+<BaseLayout>
+    <div class="flex grow">
+        <div class="w-full mt-4 mb-8 mx-4 sm:mx-auto sm:w-3/4 lg:w-1/2">
+            <BlogPost {...post.data}>
+                <Content/>
+            </BlogPost>
+        </div>
+    </div>
+</BaseLayout>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)}/>
