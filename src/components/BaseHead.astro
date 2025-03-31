@@ -1,9 +1,12 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
+import '@fontsource-variable/open-sans';
+import openSansWoff2 from '@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2?url';
 import {SITE_TITLE, SITE_DESCRIPTION} from '../consts';
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
+
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -22,6 +25,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <link rel="canonical" href={canonicalURL}/>
 
 <meta name="generator" content={Astro.generator}/>
+
+<link rel="preload" as="font" type="font/woff2" href={openSansWoff2} crossorigin="anonymous"/>
 
 <title>{SITE_TITLE}</title>
 <meta name="title" content={SITE_TITLE}/>
