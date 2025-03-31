@@ -13,14 +13,14 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
    class:list={[
        className,
        {active: isActive},
-       "inline-block hover:underline hover:decoration-orange-600 hover:decoration-solid hover:decoration-3 hover:underline-offset-8"]} {...props}>
+       "inline-block hover:underline hover:decoration-storm hover:decoration-solid hover:decoration-3 hover:underline-offset-8"]} {...props}>
     <slot/>
 </a>
 
 <style>
     a.active {
         text-decoration-line: underline;
-        text-decoration-color: var(--color-orange-600);
+        text-decoration-color: var(--color-storm);
         text-decoration-style: solid;
         text-decoration-thickness: 3px;
         text-underline-offset: 8px;

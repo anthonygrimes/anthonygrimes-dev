@@ -6,6 +6,8 @@
 @theme {
     --text-tiny: 0.5rem;
     --text-tiny--line-height: calc(1 / 0.5);
+    --color-storm: oklch(0.42 0.0408 227.92);
+    --color-storm-light: oklch(0.46 0.0448 231.48);
 }
 
 body {
