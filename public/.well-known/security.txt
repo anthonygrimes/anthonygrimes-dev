@@ -1,6 +1,6 @@
 Contact: mailto:contact@anthonygrimes.dev
 Expires: 2029-12-31T12:30:00.000Z
 Encryption: https://anthonygrimes.dev/.well-known/openpgpkey/hu/dj3498u4hyyarh35rkjfnghbjxug6b19
-Encryption: https://anthonygrimes.dev/age-key
+Encryption: https://anthonygrimes.dev/age-key.txt
 Preferred-Languages: en
 Canonical: https://anthonygrimes.dev/.well-known/security.txt
