@@ -2,38 +2,41 @@
 import {getCollection} from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/Container.astro";
+import Rss from "../../components/icons/Rss.astro";
 
 const posts = (await getCollection('blog')).sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
-<BaseLayout>
-    <div class="flex grow">
-        <div class="w-full mt-4 mb-8 mx-4 sm:mx-auto sm:w-3/4 lg:w-1/2">
-            <div class="flex items-center">
-                <h1 class="text-2xl font-bold my-4">Posts</h1>
-                <a href="/rss.xml" class="ml-2">
-                    <img class="inline-block h-6 w-6" src="/images/icons/rss.png" alt="RSS Feed Icon">
-                </a>
-            </div>
-            <div class="flex flex-col">
-                {
-                    posts.map((post) => (
-                            <div class="mb-8">
-                                <a href={`/blog/${post.id}/`}>
-                                    <h2 class="text-xl font-bold text-storm hover:underline hover:decoration-storm-light hover:decoration-2">{post.data.title}</h2>
-                                </a>
-                                <div class="flex flex-col text-base italic font-light text-neutral-700">
-                                    <p>
-                                        Published on
-                                        <FormattedDate date={post.data.pubDate}/>
-                                    </p>
-                                </div>
-                            </div>
-                    ))
-                }
-            </div>
+<BaseLayout title="Blog">
+    <Container>
+        <div class="flex items-center gap-2">
+            <h1 class="text-h1 font-bold my-4">Posts</h1>
+            <a href="/rss.xml" class="grid size-11 place-items-center rounded-md text-accent hover:text-accent-hover">
+                <Rss class="size-6"/>
+                <span class="sr-only">RSS feed</span>
+            </a>
         </div>
-    </div>
+        {posts.length === 0 ? (
+            <p class="rounded-md border border-dashed border-border bg-surface px-5 py-6 text-muted">
+                No posts yet. <a href="/rss.xml" class="font-semibold text-accent hover:text-accent-hover hover:underline underline-offset-4">Subscribe via RSS</a> to hear when the first one lands.
+            </p>
+        ) : (
+            <ul class="flex flex-col gap-8">
+                {posts.map((post) => (
+                    <li>
+                        <a href={`/blog/${post.id}/`}
+                           class="text-h2 font-bold text-accent hover:text-accent-hover hover:underline underline-offset-4">
+                            <h2>{post.data.title}</h2>
+                        </a>
+                        <p class="mt-1 text-base italic text-muted">
+                            Published on <FormattedDate date={post.data.pubDate}/>
+                        </p>
+                    </li>
+                ))}
+            </ul>
+        )}
+    </Container>
 </BaseLayout>

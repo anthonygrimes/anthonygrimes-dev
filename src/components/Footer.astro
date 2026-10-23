@@ -1,7 +1,25 @@
 ---
+import Rss from "./icons/Rss.astro";
+
 const date = new Date();
+const links = [
+    {href: 'https://github.com/anthonygrimes', label: 'GitHub'},
+    {href: 'https://www.linkedin.com/in/anthony-grimes/', label: 'LinkedIn'},
+];
 ---
 
-<footer class="flex mx-auto mb-1">
-    <p class="text-tiny sm:text-sm text-neutral-700">&copy; {date.getFullYear()} Anthony Grimes. All rights reserved.</p>
+<footer class="mx-auto w-full max-w-5xl px-4 sm:px-6">
+    <div class="flex flex-col-reverse items-center gap-3 border-t border-rule py-6 text-sm text-muted sm:flex-row sm:justify-between">
+        <p>&copy; {date.getFullYear()} Anthony Grimes. All rights reserved.</p>
+        <ul class="flex items-center gap-5">
+            {links.map(({href, label}) => (
+                <li><a class="hover:text-accent" href={href}>{label}</a></li>
+            ))}
+            <li>
+                <a class="inline-flex items-center gap-1 hover:text-accent" href="/rss.xml">
+                    <Rss class="size-4"/> RSS
+                </a>
+            </li>
+        </ul>
+    </div>
 </footer>

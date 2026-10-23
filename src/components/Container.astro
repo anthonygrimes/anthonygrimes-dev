@@ -1,0 +1,12 @@
+---
+import type {HTMLAttributes} from 'astro/types';
+
+type Props = HTMLAttributes<'div'>;
+
+const {class: className, ...props} = Astro.props;
+---
+
+<!-- Shared page column: readable line length at every screen size -->
+<div class:list={["mx-auto w-full max-w-[68ch] px-4 sm:px-6 pt-4 pb-12", className]} {...props}>
+    <slot/>
+</div>
