@@ -1,7 +1,6 @@
 ---
 const options = [
     {value: 'light', label: 'Light theme'},
-    {value: 'system', label: 'System theme'},
     {value: 'dark', label: 'Dark theme'},
 ] as const;
 ---
@@ -24,12 +23,6 @@ const options = [
                     <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
                 </svg>
             )}
-            {value === 'system' && (
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="3" width="20" height="14" rx="2"/>
-                    <path d="M8 21h8M12 17v4"/>
-                </svg>
-            )}
             {value === 'dark' && (
                 <svg aria-hidden="true" viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -47,49 +40,52 @@ const options = [
 </style>
 
 <script>
-    type Pref = 'light' | 'dark' | 'system';
+    type Theme = 'light' | 'dark';
 
     const media = matchMedia('(prefers-color-scheme: dark)');
     const root = document.documentElement;
+    const systemTheme = (): Theme => (media.matches ? 'dark' : 'light');
 
-    function currentPref(): Pref {
+    // A saved choice wins; otherwise follow the OS
+    function savedTheme(): Theme | null {
         const p = root.dataset.themePref;
-        return p === 'light' || p === 'dark' ? p : 'system';
+        return p === 'light' || p === 'dark' ? p : null;
     }
 
-    function apply(pref: Pref) {
-        const dark = pref === 'dark' || (pref === 'system' && media.matches);
-        root.dataset.theme = dark ? 'dark' : 'light';
-        root.dataset.themePref = pref;
+    function apply() {
+        const theme = savedTheme() ?? systemTheme();
+        root.dataset.theme = theme;
         document.querySelectorAll<HTMLButtonElement>('[data-theme-option]').forEach((btn) => {
-            const selected = btn.dataset.themeOption === pref;
+            const selected = btn.dataset.themeOption === theme;
             btn.setAttribute('aria-checked', String(selected));
             btn.tabIndex = selected ? 0 : -1;
         });
     }
 
-    function save(pref: Pref) {
+    function choose(theme: Theme) {
+        // Picking the OS theme clears the override, so the site keeps following the OS
+        const override = theme === systemTheme() ? null : theme;
         try {
-            if (pref === 'system') localStorage.removeItem('theme');
-            else localStorage.setItem('theme', pref);
+            if (override) localStorage.setItem('theme', override);
+            else localStorage.removeItem('theme');
         } catch {
             // Storage blocked (e.g. private mode): the choice lasts for this page only
         }
-        apply(pref);
+        if (override) root.dataset.themePref = override;
+        else delete root.dataset.themePref;
+        apply();
     }
 
-    apply(currentPref());
+    apply();
 
-    // Follow live OS changes while on System
-    media.addEventListener('change', () => {
-        if (currentPref() === 'system') apply('system');
-    });
+    // Follow live OS changes when nothing is saved
+    media.addEventListener('change', apply);
 
     document.querySelectorAll<HTMLElement>('.theme-toggle').forEach((group) => {
         const buttons = [...group.querySelectorAll<HTMLButtonElement>('[data-theme-option]')];
 
         buttons.forEach((btn) => {
-            btn.addEventListener('click', () => save(btn.dataset.themeOption as Pref));
+            btn.addEventListener('click', () => choose(btn.dataset.themeOption as Theme));
         });
 
         // Radio-group keyboard pattern: arrows move and select
@@ -104,7 +100,7 @@ const options = [
             else return;
             e.preventDefault();
             buttons[next].focus();
-            save(buttons[next].dataset.themeOption as Pref);
+            choose(buttons[next].dataset.themeOption as Theme);
         });
     });
 </script>
