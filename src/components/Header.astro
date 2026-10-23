@@ -1,12 +1,24 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import {SITE_TITLE} from "../consts";
 ---
 
-<header class="mx-auto my-4">
-    <nav class="text-base sm:text-xl space-x-8">
-        <HeaderLink href="/">Home</HeaderLink>
-        <HeaderLink href="/about">About</HeaderLink>
-        <HeaderLink href="/blog">Blog</HeaderLink>
-        <HeaderLink href="/contact">Contact Me</HeaderLink>
-    </nav>
+<header class="mx-auto w-full max-w-5xl px-4 sm:px-6 py-4">
+    <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <a href="/" class="text-lg font-bold tracking-tight hover:text-accent">
+            {SITE_TITLE}
+        </a>
+        <div class="sm:order-last">
+            <ThemeToggle/>
+        </div>
+        <nav aria-label="Main" class="order-last w-full sm:order-none sm:w-auto sm:ml-auto">
+            <ul class="flex flex-wrap gap-x-5 gap-y-2 text-base sm:gap-x-7 sm:text-lg">
+                <li><HeaderLink href="/">Home</HeaderLink></li>
+                <li><HeaderLink href="/about">About</HeaderLink></li>
+                <li><HeaderLink href="/blog">Blog</HeaderLink></li>
+                <li><HeaderLink href="/contact">Contact</HeaderLink></li>
+            </ul>
+        </nav>
+    </div>
 </header>

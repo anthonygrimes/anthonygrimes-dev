@@ -2,15 +2,28 @@
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+
+interface Props {
+    title?: string;
+    description?: string;
+}
+
+const {title, description} = Astro.props;
 ---
 
 <html lang="en">
 <head>
-    <BaseHead></BaseHead>
+    <BaseHead title={title} description={description}/>
 </head>
-<body class="flex flex-col min-w-svw min-h-svh bg-white text-black antialiased md:subpixel-antialiased overflow-x-hidden">
+<body class="flex flex-col min-h-svh bg-bg text-fg antialiased md:subpixel-antialiased">
+<a href="#main"
+   class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent">
+    Skip to content
+</a>
 <Header/>
-<slot/>
+<main id="main" class="flex grow flex-col">
+    <slot/>
+</main>
 <Footer/>
 </body>
 </html>

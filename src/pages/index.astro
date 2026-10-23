@@ -3,7 +3,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout>
-    <div class="flex grow items-center justify-center">
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl">Hi! I'm <span class="font-bold text-storm">Anthony Grimes</span>.</h1>
+    <div class="flex grow items-center justify-center px-4 sm:px-6 py-12">
+        <div class="max-w-3xl text-center">
+            <h1 class="text-display font-semibold tracking-tight text-balance">
+                Hi! I'm <span class="font-bold text-accent">Anthony Grimes</span>.
+            </h1>
+            <p class="mt-4 text-lead text-muted text-balance">
+                Software engineer working in finance.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+                <a href="/about"
+                   class="inline-flex min-h-11 items-center rounded-md bg-accent px-5 font-semibold text-on-accent hover:bg-accent-hover">
+                    About me
+                </a>
+                <a href="/contact"
+                   class="inline-flex min-h-11 items-center font-semibold text-accent underline-offset-4 hover:text-accent-hover hover:underline">
+                    Get in touch &rarr;
+                </a>
+            </div>
+        </div>
     </div>
 </BaseLayout>

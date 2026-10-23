@@ -4,11 +4,35 @@ import '@fontsource-variable/open-sans';
 import openSansWoff2 from '@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2?url';
 import {SITE_TITLE, SITE_DESCRIPTION} from '../consts';
 
+interface Props {
+    title?: string;
+    description?: string;
+}
+
+const {title, description = SITE_DESCRIPTION} = Astro.props;
+const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<!-- Apply the saved or system theme before first paint to avoid a flash -->
+<script is:inline>
+    (() => {
+        let pref = 'system';
+        try {
+            pref = localStorage.getItem('theme') || 'system';
+        } catch {}
+        const dark = pref === 'dark' || (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.dataset.themePref = pref;
+    })();
+</script>
+
+<meta name="color-scheme" content="light dark"/>
+<meta name="theme-color" content="#FAF6EF" media="(prefers-color-scheme: light)"/>
+<meta name="theme-color" content="#120F0D" media="(prefers-color-scheme: dark)"/>
 
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -28,6 +52,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 <link rel="preload" as="font" type="font/woff2" href={openSansWoff2} crossorigin="anonymous"/>
 
-<title>{SITE_TITLE}</title>
-<meta name="title" content={SITE_TITLE}/>
-<meta name="description" content={SITE_DESCRIPTION}/>
+<title>{pageTitle}</title>
+<meta name="title" content={pageTitle}/>
+<meta name="description" content={description}/>

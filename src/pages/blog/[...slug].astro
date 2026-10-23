@@ -3,6 +3,7 @@ import {type CollectionEntry, getCollection} from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 import {render} from 'astro:content';
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/Container.astro";
 import {getArticleSchema} from '../../structuredData';
 import {blogWebsite} from '../../structuredData';
 
@@ -46,14 +47,12 @@ const jsonLd = {
 const {Content} = await render(post);
 ---
 
-<BaseLayout>
-    <div class="flex grow">
-        <div class="w-full mt-4 mb-8 mx-4 sm:mx-auto sm:w-3/4 lg:w-1/2">
-            <BlogPost {...post.data}>
-                <Content/>
-            </BlogPost>
-        </div>
-    </div>
+<BaseLayout title={post.data.title} description={post.data.description}>
+    <Container>
+        <BlogPost {...post.data}>
+            <Content/>
+        </BlogPost>
+    </Container>
 </BaseLayout>
 
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}/>

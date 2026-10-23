@@ -1,0 +1,110 @@
+---
+const options = [
+    {value: 'light', label: 'Light theme'},
+    {value: 'system', label: 'System theme'},
+    {value: 'dark', label: 'Dark theme'},
+] as const;
+---
+
+<div class="theme-toggle inline-flex rounded-full border border-rule bg-surface p-0.5"
+     role="radiogroup"
+     aria-label="Colour theme">
+    {options.map(({value, label}) => (
+        <button type="button"
+                role="radio"
+                aria-checked="false"
+                tabindex="-1"
+                data-theme-option={value}
+                title={label}
+                class="grid size-9 place-items-center rounded-full text-muted transition-colors hover:text-fg hover:cursor-pointer aria-checked:bg-bg aria-checked:text-accent pointer-coarse:size-11">
+            <span class="sr-only">{label}</span>
+            {value === 'light' && (
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+            )}
+            {value === 'system' && (
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <path d="M8 21h8M12 17v4"/>
+                </svg>
+            )}
+            {value === 'dark' && (
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            )}
+        </button>
+    ))}
+</div>
+
+<style>
+    /* Without JS the toggle can't work, so hide it; the site follows the OS instead */
+    :global(:root:not([data-theme])) .theme-toggle {
+        display: none;
+    }
+</style>
+
+<script>
+    type Pref = 'light' | 'dark' | 'system';
+
+    const media = matchMedia('(prefers-color-scheme: dark)');
+    const root = document.documentElement;
+
+    function currentPref(): Pref {
+        const p = root.dataset.themePref;
+        return p === 'light' || p === 'dark' ? p : 'system';
+    }
+
+    function apply(pref: Pref) {
+        const dark = pref === 'dark' || (pref === 'system' && media.matches);
+        root.dataset.theme = dark ? 'dark' : 'light';
+        root.dataset.themePref = pref;
+        document.querySelectorAll<HTMLButtonElement>('[data-theme-option]').forEach((btn) => {
+            const selected = btn.dataset.themeOption === pref;
+            btn.setAttribute('aria-checked', String(selected));
+            btn.tabIndex = selected ? 0 : -1;
+        });
+    }
+
+    function save(pref: Pref) {
+        try {
+            if (pref === 'system') localStorage.removeItem('theme');
+            else localStorage.setItem('theme', pref);
+        } catch {
+            // Storage blocked (e.g. private mode): the choice lasts for this page only
+        }
+        apply(pref);
+    }
+
+    apply(currentPref());
+
+    // Follow live OS changes while on System
+    media.addEventListener('change', () => {
+        if (currentPref() === 'system') apply('system');
+    });
+
+    document.querySelectorAll<HTMLElement>('.theme-toggle').forEach((group) => {
+        const buttons = [...group.querySelectorAll<HTMLButtonElement>('[data-theme-option]')];
+
+        buttons.forEach((btn) => {
+            btn.addEventListener('click', () => save(btn.dataset.themeOption as Pref));
+        });
+
+        // Radio-group keyboard pattern: arrows move and select
+        group.addEventListener('keydown', (e) => {
+            const i = buttons.indexOf(document.activeElement as HTMLButtonElement);
+            if (i < 0) return;
+            let next = i;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % buttons.length;
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (i - 1 + buttons.length) % buttons.length;
+            else if (e.key === 'Home') next = 0;
+            else if (e.key === 'End') next = buttons.length - 1;
+            else return;
+            e.preventDefault();
+            buttons[next].focus();
+            save(buttons[next].dataset.themeOption as Pref);
+        });
+    });
+</script>
