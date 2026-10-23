@@ -8,7 +8,7 @@ import {getArticleSchema} from '../../structuredData';
 import {blogWebsite} from '../../structuredData';
 
 export async function getStaticPaths() {
-    const posts = await getCollection('blog');
+    const posts = await getCollection('blog', ({data}) => import.meta.env.PROD ? !data.draft : true);
     return posts.map((post) => ({
         params: {slug: post.id},
         props: post,
