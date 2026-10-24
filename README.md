@@ -48,6 +48,8 @@ This project is built with the [Astro Framework](https://astro.build) and utiliz
 The site is hosted by [Cloudflare](https://www.cloudflare.com/) on their [Pages](https://pages.cloudflare.com) product
 and is fully static in nature.
 
+The contact form is powered by [Web3Forms](https://web3forms.com).
+
 My font of choice is [Open Sans](https://fontsource.org/fonts/open-sans).
 
 ### Accessibility information
